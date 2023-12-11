@@ -27,7 +27,7 @@ uint8_t result = 0;
 volatile int randomCounter = 0;
 volatile int playedNumbers = 0;
 volatile bool timeToCheckGameStatus = false;
-int buttonPressCount = 0;
+int buttonPressCount;
 
 void setup() {
   /*
@@ -58,7 +58,7 @@ void loop() {
 
 ISR(TIMER1_COMPA_vect) {
   // Laskee pelattujen numeroiden määrän, sekä nostaa pelinopeutta 10%:lla joka kymmenes numero
-
+  Serial.println("timer");
   //Serial.print("timer1");
   if (playedNumbers >= 10) {
     playedNumbers = 0;
@@ -81,6 +81,7 @@ ISR(TIMER1_COMPA_vect) {
         Serial.println(temp);
     }*/
 
+checkArr(randomNumbers);
 
   clearAllLeds();
   setLed(randomNumbers[randomCounter]);
@@ -98,11 +99,17 @@ void initializeTimer(void) {
   TCCR1B |= (1 << CS12) | (1 << CS10);  // Prescaleriksi 1024
   TIMSK1 |= (1 << OCIE1A);              // Sallii Timer1:n vertailu A - keskeytyksen
 }
+void checkArr(int arr[]){
+  for(int i = 0; i<= 100; i++){
+    Serial.print(arr[i]);
+    Serial.print(" ");
+  }
+}
 
 void checkGame(int buttonPressCount) {
   // Vertailee randomNumbers sekä userNumbers alkioita toisiinsa, mikäli löytyy ero, peli päätetään.
   Serial.println("!!!!!!!!check game!!!!!!!");
-  for (int i = 0; i < buttonPressCount; i++) {
+  for (int i = 0; i <= buttonPressCount; i++) {
 
 
     if (randomNumbers[i] != userNumbers[i]) {
@@ -113,7 +120,7 @@ void checkGame(int buttonPressCount) {
     } else Serial.println("Oikeaa nappia painettu, peli jatkuu.");
     timeToCheckGameStatus = false;
 
-    uint8_t result = buttonPressCount;
+    result = buttonPressCount;
     showResult(result);
   }
 }
@@ -123,13 +130,13 @@ void initializeGame() {
   gameState = true;
   Serial.println("!! initialzieGame!!");
   initializeTimer();
-  randomSeed(analogRead(0));  // Käyttää A0 porttia luodakseen satunnaisen "Siemenen", jolla generoida satunnaisia numeroita.
+  randomSeed(analogRead(A0));  // Käyttää A0 porttia luodakseen satunnaisen "Siemenen", jolla generoida satunnaisia numeroita.
 
   volatile int randomCounter = 0;
   int playerNumbers = 0;
   bool timeToCheckGameStatus = false;
-  uint8_t buttonPressCount = 1;  // Ykkönen, jotta taulukot olisivat synkronoitu ja molemmat alkavat "ensimmäisestä" alkiosta, eikä 0 alkiosta.
-  uint8_t result = 0;
+  buttonPressCount = 0;  // Ykkönen, jotta taulukot olisivat synkronoitu ja molemmat alkavat "ensimmäisestä" alkiosta, eikä 0 alkiosta.
+  result = 0;
   gameOver = false;
 
   //Nämä resetoi jokaisen alkion luvun nollaksi
@@ -146,6 +153,7 @@ void startTheGame() {
 }
 
 void stopTheGame() {
+  clearAllLeds();
   TIMSK1 &= ~(1 << OCIE1A);  // Disabloi Timer1:sen käytön
   gameOver = true;
 }
