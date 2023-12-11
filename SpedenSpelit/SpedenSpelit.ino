@@ -100,7 +100,7 @@ void initializeTimer(void) {
   TIMSK1 |= (1 << OCIE1A);              // Sallii Timer1:n vertailu A - keskeytyksen
 }
 void checkArr(int arr[]){
-  for(int i = 0; i<= 100; i++){
+  for(int i = 0; i<= 10; i++){
     Serial.print(arr[i]);
     Serial.print(" ");
   }
@@ -109,7 +109,7 @@ void checkArr(int arr[]){
 void checkGame(int buttonPressCount) {
   // Vertailee randomNumbers sekä userNumbers alkioita toisiinsa, mikäli löytyy ero, peli päätetään.
   Serial.println("!!!!!!!!check game!!!!!!!");
-  for (int i = 0; i <= buttonPressCount; i++) {
+  for (int i = 0; i < buttonPressCount; i++) {
 
 
     if (randomNumbers[i] != userNumbers[i]) {
@@ -135,7 +135,7 @@ void initializeGame() {
   volatile int randomCounter = 0;
   int playerNumbers = 0;
   bool timeToCheckGameStatus = false;
-  buttonPressCount = 0;  // Ykkönen, jotta taulukot olisivat synkronoitu ja molemmat alkavat "ensimmäisestä" alkiosta, eikä 0 alkiosta.
+  buttonPressCount = 1;  // Ykkönen, jotta taulukot olisivat synkronoitu ja molemmat alkavat "ensimmäisestä" alkiosta, eikä 0 alkiosta.
   result = 0;
   gameOver = false;
 
